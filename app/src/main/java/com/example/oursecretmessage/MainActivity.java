@@ -2,6 +2,7 @@ package com.example.oursecretmessage;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -39,75 +40,6 @@ public class MainActivity extends AppCompatActivity {
             }
             startIndex++;
         }
-    }
-
-    public void Encrypt(View view) {
-        InputMethodManager keyboard = (InputMethodManager) getSystemService(ContextThemeWrapper.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
-        EditText oM = findViewById(R.id.txtMessage);
-        EditText sW = findViewById(R.id.txtSecretWord);
-
-        String originalMessage = oM.getText().toString();
-        String secretWord = sW.getText().toString();
-        String encryptedMessage = "";
-
-        //Matching secretWord length with originalMessage length
-        while (secretWord.length() < originalMessage.length()) {
-            int d = originalMessage.length() - secretWord.length();
-
-            if (d > secretWord.length())
-                secretWord += secretWord;
-            else
-                secretWord += secretWord.substring(0, d);
-        }
-
-        for (int x = 0; x < originalMessage.length(); x++) {
-            int i = (String.valueOf(cipher[0])).indexOf(originalMessage.charAt(x));
-            int j = (String.valueOf(cipher[0])).indexOf((secretWord.charAt(x)));
-
-            encryptedMessage += String.valueOf(cipher[i][j]);
-
-        }
-
-        Log.i("Encrypted Message", encryptedMessage);
-
-        oM.setText(encryptedMessage);
-        sW.setText("");
-    }
-
-    public void Decrypt(View view) {
-        InputMethodManager keyboard = (InputMethodManager) getSystemService(ContextThemeWrapper.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
-        EditText sM = findViewById(R.id.txtMessage);
-        EditText sW = findViewById(R.id.txtSecretWord);
-
-        String originalMessage = sM.getText().toString();
-        String secretWord = sW.getText().toString();
-        String decryptedMessage = "";
-
-        //Matching secretWord length with originalMessage length
-        while (secretWord.length() < originalMessage.length()) {
-            int d = originalMessage.length() - secretWord.length();
-
-            if (d > secretWord.length())
-                secretWord += secretWord;
-            else
-                secretWord += secretWord.substring(0, d);
-        }
-
-        for (int x = 0; x < originalMessage.length(); x++) {
-            int j = (String.valueOf(cipher[0])).indexOf(secretWord.charAt(x));
-            int i = (String.valueOf(cipher[j])).indexOf(originalMessage.charAt(x));
-
-
-            decryptedMessage += String.valueOf(cipher[0][i]);
-
-        }
-
-        sM.setText(decryptedMessage);
-        sW.setText("");
     }
 
     public void ProcessMessage(View v) {
@@ -185,5 +117,15 @@ public class MainActivity extends AppCompatActivity {
             pm += String.valueOf(cipher[0][i]);
         }
         return pm;
+    }
+
+    public void Share(View v){
+
+        EditText txtMessage = findViewById(R.id.txtMessage);
+        //Creating ACTION with INTENT
+        Intent shareText = new Intent(Intent.ACTION_SEND);
+        shareText.setType("text/plain");
+        shareText.putExtra(Intent.EXTRA_TEXT, txtMessage.getText().toString());
+        getBaseContext().startActivity(Intent.createChooser(shareText, "Share with"));
     }
 }
