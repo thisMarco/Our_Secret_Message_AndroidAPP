@@ -17,18 +17,33 @@ import static java.lang.Character.valueOf;
 
 public class MainActivity extends AppCompatActivity {
 
-    int nOfCharacters = 26; //62
+    int nOfCharacters = 256; //26; //62
     char[][] cipher = new char[nOfCharacters][nOfCharacters];
 
-    String cipherCharacters = //"0123456789" +
-            //"abcdefghijklmnopqrstuvwxyz" +
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    String cipherCharacters = CreateCipherString();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        CreateCipherTable();
+        ActionSend();
+    }
+
+    public String CreateCipherString(){
+        String characters = "";
+
+        for(int i = 0; i <= nOfCharacters; i++) {
+            characters += Character.toString((char) i);
+        }
+
+        Log.i("String", characters);
+
+        return characters;
+    }
+
+    public void CreateCipherTable(){
         int startIndex = 0;
         for (int i = 0; i < nOfCharacters; i++) {
             int cIndex = startIndex;
@@ -42,6 +57,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void ActionSend(){
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if ("text/plain".equals(type)){
+            String message = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if(message != null){
+                EditText txtMessage = findViewById(R.id.txtMessage);
+                txtMessage.setText(message);
+            }
+        }
+    }
+
     public void ProcessMessage(View v) {
         InputMethodManager keyboard = (InputMethodManager) getSystemService(ContextThemeWrapper.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -51,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         String originalMessage = sM.getText().toString();
         String secretWord = sW.getText().toString();
-        String processedMessage = "";
+        String processedMessage;
 
         secretWord = ExpandSecretWord(secretWord, originalMessage);
 
@@ -79,9 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String ProcessMessage(String message, String sw, String caller) {
 
-        String processedMessage = "";
-
-        Log.i("Caller", caller);
+        String processedMessage;
 
         if (caller.equals("Encrypt"))
             processedMessage = EncryptMessage(message, sw);
@@ -98,9 +125,6 @@ public class MainActivity extends AppCompatActivity {
             int j = (String.valueOf(cipher[0])).indexOf((sw.charAt(x)));
 
             pm += String.valueOf(cipher[i][j]);
-            Log.i("i", Integer.toString(i));
-            Log.i("j", Integer.toString(j));
-            Log.i("Character", String.valueOf(cipher[i][j]));
         }
 
         return pm;
@@ -113,14 +137,12 @@ public class MainActivity extends AppCompatActivity {
             int j = (String.valueOf(cipher[0])).indexOf(sw.charAt(x));
             int i = (String.valueOf(cipher[j])).indexOf(message.charAt(x));
 
-
             pm += String.valueOf(cipher[0][i]);
         }
         return pm;
     }
 
     public void Share(View v){
-
         EditText txtMessage = findViewById(R.id.txtMessage);
         //Creating ACTION with INTENT
         Intent shareText = new Intent(Intent.ACTION_SEND);
