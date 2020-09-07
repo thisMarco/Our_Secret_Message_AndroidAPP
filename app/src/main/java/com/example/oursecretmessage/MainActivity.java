@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         return processedMessage;
     }
 
-    public String EncryptMessage(String message, String sw) {
+    public String EncryptMessage_T(String message, String sw) {
         String pm = "";
         for (int x = 0; x < message.length(); x++) {
             int i = (String.valueOf(cipher[0])).indexOf(message.charAt(x));
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         return pm;
     }
 
-    public String DecryptMessage(String message, String sw) {
+    public String DecryptMessage_T(String message, String sw) {
         String pm = "";
 
         for (int x = 0; x < message.length(); x++) {
@@ -139,6 +139,42 @@ public class MainActivity extends AppCompatActivity {
 
             pm += String.valueOf(cipher[0][i]);
         }
+        return pm;
+    }
+
+    public String EncryptMessage(String message, String sw) {
+        String pm = "";
+
+        for (int i = 0; i < message.length(); i++) {
+            int mci = cipherCharacters.indexOf(message.charAt(i));
+            int sci = cipherCharacters.indexOf(sw.charAt(i));
+
+            int eci = mci + sci;
+
+            if (eci >= nOfCharacters)
+                eci-=nOfCharacters;
+
+            pm+=cipherCharacters.charAt(eci);
+        }
+
+        return pm;
+    }
+
+    public String DecryptMessage(String message, String sw) {
+        String pm = "";
+
+        for (int i = 0; i < message.length(); i++) {
+            int eci = cipherCharacters.indexOf(message.charAt(i));
+            int sci = cipherCharacters.indexOf(sw.charAt(i));
+
+            int mci = eci - sci;
+
+            if (mci < 0)
+                mci = nOfCharacters - mci;
+
+            pm+= cipherCharacters.charAt(mci);
+        }
+
         return pm;
     }
 
