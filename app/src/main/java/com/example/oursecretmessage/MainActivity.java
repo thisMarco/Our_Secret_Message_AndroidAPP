@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
             characters += Character.toString((char) i);
         }
 
-        Log.i("String", characters);
-
         return characters;
     }
 
@@ -142,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         return pm;
     }
 
-    public String EncryptMessage(String message, String sw) {
+    public String EncryptMessage_A(String message, String sw) {
         String pm = "";
 
         for (int i = 0; i < message.length(); i++) {
@@ -160,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         return pm;
     }
 
-    public String DecryptMessage(String message, String sw) {
+    public String DecryptMessage_A(String message, String sw) {
         String pm = "";
 
         for (int i = 0; i < message.length(); i++) {
@@ -173,6 +171,42 @@ public class MainActivity extends AppCompatActivity {
                 mci = nOfCharacters - mci;
 
             pm+= cipherCharacters.charAt(mci);
+        }
+
+        return pm;
+    }
+
+    public String EncryptMessage(String message, String sw) {
+        String pm = "";
+
+        for (int i = 0; i < message.length(); i++) {
+            int mci = (int) message.charAt(i);
+            int sci = (int) sw.charAt(i);
+
+            int eci = mci + sci;
+
+            if (eci >= 65536)
+                eci-=63536;
+
+            pm+=(char) eci;
+        }
+
+        return pm;
+    }
+
+    public String DecryptMessage(String message, String sw) {
+        String pm = "";
+
+        for(int i = 0; i < message.length(); i++) {
+            int eci = (int)(message.charAt(i));
+            int sci = (int)(sw.charAt(i));
+
+            int mci = eci-sci;
+
+            if (mci < 0)
+                mci = 65536 - mci;
+
+            pm += (char)mci;
         }
 
         return pm;
